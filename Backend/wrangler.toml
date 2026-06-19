@@ -2,8 +2,8 @@ name = "telegram-store-backend"
 main = "build/app.wasm"
 compatibility_date = "2026-06-19"
 
-[build]
-command = "tinygo build -o build/app.wasm -target wasm main.go"
+#[build]
+#command = "tinygo build -o build/app.wasm -target wasm main.go"
 
 [[d1_databases]]
 binding = "DB"
