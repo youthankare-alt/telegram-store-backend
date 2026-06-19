@@ -1,5 +1,10 @@
 {
   "name": "telegram-store-backend",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "wget -q https://github.com/tinygo-org/tinygo/releases/download/v0.32.0/tinygo0.32.0.linux-amd64.tar.gz && tar -xzf tinygo0.32.0.linux-amd64.tar.gz && mkdir -p build && ./tinygo/bin/tinygo build -o build/app.wasm -target wasm main.go",
+    "deploy": "npx wrangler deploy"
+  },
   "devDependencies": {
     "wrangler": "^3.0.0"
   }
