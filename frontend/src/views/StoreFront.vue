@@ -50,7 +50,6 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
-import { usePopup, useHapticFeedback } from 'vue-tg'
 
 interface Product {
   id: number
@@ -74,17 +73,19 @@ const user = ref<TelegramUser | null>(null)
 // GANTI DENGAN URL WORKER ANDA YANG AKTIF
 const backendURL = "https://telegram-store-backend.YOURSUBDOMAIN.workers.dev" 
 
-const popup = usePopup()
-const haptic = useHapticFeedback()
+// Pengaman Native SDK (Menghindari ketergantungan library luar yang rentan crash)
+const getTelegramWebApp = () => {
+  return (window as any).Telegram?.WebApp || null
+}
 
 const initTelegramUser = () => {
-  const telegramWebApp = (window as any).Telegram?.WebApp
-  if (telegramWebApp && telegramWebApp.initDataUnsafe?.user) {
-    user.value = telegramWebApp.initDataUnsafe.user
-    telegramWebApp.ready()
-    telegramWebApp.expand()
+  const tg = getTelegramWebApp()
+  if (tg && tg.initDataUnsafe?.user) {
+    user.value = tg.initDataUnsafe.user
+    tg.ready()
+    tg.expand()
   } else {
-    // Mode fallback jika diakses di luar telegram untuk pengujian lokal
+    // Mode Fallback untuk pengujian browser normal agar tidak blank
     user.value = {
       id: 99999999,
       first_name: "Tamu",
@@ -101,20 +102,43 @@ const fetchProducts = async () => {
     products.value = await response.json()
   } catch (error) {
     console.error("Gagal memuat produk:", error)
-    popup.showAlert("Sistem gagal memuat katalog. Pastikan koneksi internet stabil.")
+    showAlert("Sistem gagal memuat katalog. Pastikan koneksi internet stabil.")
   } finally {
     loading.value = false
   }
 }
 
+const showAlert = (message: string) => {
+  const tg = getTelegramWebApp()
+  if (tg && tg.showAlert) {
+    tg.showAlert(message)
+  } else {
+    alert(message)
+  }
+}
+
+const triggerHaptic = () => {
+  const tg = getTelegramWebApp()
+  if (tg && tg.HapticFeedback) {
+    tg.HapticFeedback.impactOccurred('medium')
+  }
+}
+
+const triggerHapticNotification = (type: 'success' | 'error') => {
+  const tg = getTelegramWebApp()
+  if (tg && tg.HapticFeedback) {
+    tg.HapticFeedback.notificationOccurred(type)
+  }
+}
+
 const checkout = async (product: Product) => {
-  haptic.impactOccurred('medium')
+  triggerHaptic()
   
-  const telegramWebApp = (window as any).Telegram?.WebApp
-  const initData = telegramWebApp ? telegramWebApp.initData : ""
+  const tg = getTelegramWebApp()
+  const initData = tg ? tg.initData : ""
 
   if (!initData) {
-    popup.showAlert("Silakan buka aplikasi ini langsung di dalam aplikasi Telegram.")
+    showAlert("Silakan buka aplikasi ini langsung di dalam aplikasi Telegram.")
     return
   }
 
@@ -133,11 +157,11 @@ const checkout = async (product: Product) => {
       throw new Error(errorData.error || "Gagal membuat pesanan")
     }
 
-    haptic.notificationOccurred('success')
-    popup.showAlert(`Pesanan untuk "${product.name}" berhasil dicatat!`)
+    triggerHapticNotification('success')
+    showAlert(`Pesanan untuk "${product.name}" berhasil dicatat!`)
   } catch (error: any) {
-    haptic.notificationOccurred('error')
-    popup.showAlert(`Gagal membuat pesanan: ${error.message}`)
+    triggerHapticNotification('error')
+    showAlert(`Gagal membuat pesanan: ${error.message}`)
   }
 }
 
