@@ -1,0 +1,41 @@
+name: Deploy Go Worker
+
+on:
+  push:
+    branches:
+      - main  # Memicu deploy otomatis setiap kali ada perubahan di branch main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Go Environment
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Setup TinyGo Compiler
+        uses: tinygo-org/setup-tinygo@v2
+        with:
+          tinygo-version: '0.31.2'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Node Dependencies
+        run: npm install
+
+      - name: Compile Go to WebAssembly
+        run: |
+          mkdir -p build
+          tinygo build -o build/app.wasm -target wasm main.go
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
