@@ -71,7 +71,7 @@ const loading = ref<boolean>(true)
 const user = ref<TelegramUser | null>(null)
 
 // GANTI DENGAN URL WORKER ANDA YANG AKTIF
-const backendURL = "https://telegram-store-backend.YOURSUBDOMAIN.workers.dev" 
+const backendURL = "https://telegram-store-backend.youthankare.workers.dev/" 
 
 // Pengaman Native SDK (Menghindari ketergantungan library luar yang rentan crash)
 const getTelegramWebApp = () => {
