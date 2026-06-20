@@ -5,4 +5,4 @@ compatibility_date = "2026-06-19"
 [[d1_databases]]
 binding = "DB"
 database_name = "tg-store-db"
-database_id = "baf6cdd2-5c2a-41d5-b217-0edbcf89c375" # Pastikan UUID Anda bersih tanpa huruf "I" di ujungnya
+database_id = "baf6cdd2-5c2a-41d5-b217-0edbcf89c375"
