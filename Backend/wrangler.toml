@@ -1,6 +1,8 @@
 name = "telegram-store-backend"
-main = "build/worker.mjs"               # UBAH KELUARAN UTAMA MENJADI INI
+main = "build/worker.mjs"
 compatibility_date = "2026-06-19"
+# TAMBAHKAN BARIS INI:
+compatibility_flags = [ "streams_enable_constructors" ]
 
 [[d1_databases]]
 binding = "DB"
