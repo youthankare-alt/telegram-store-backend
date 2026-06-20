@@ -74,7 +74,7 @@ func validateTelegramInitData(initData string, botToken string) (bool, error) {
 func enableCORS(w http.ResponseWriter, r *http.Request) bool {
 	// Catatan Keamanan: Untuk produksi, Anda sangat disarankan mengubah "*" 
 	// menjadi domain Cloudflare Pages Anda (contoh: "https://telegram-store-frontend.pages.dev")
-	w.Header().Set("Access-Control-Allow-Origin", "https://telegram-store-frontend.pages.dev")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Telegram-Init-Data")
 	
